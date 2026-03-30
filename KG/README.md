@@ -1,5 +1,7 @@
 # Knowledge Graph For Urban Transportation Intrusion Detection System
 
+**Credit to** https://github.com/RobelDawit/Intelligent-Traffic-System-with-Networked-Autonomous-Vehicles
+
 This repository contains the active code and cached inputs for a
 transportation-cybersecurity research pipeline. Structured outputs are
 generated locally when you run the experiments. The project compares
