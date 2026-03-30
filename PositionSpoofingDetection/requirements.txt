@@ -1,0 +1,6 @@
+geopandas
+networkx
+osmnx
+pandas
+requests
+shapely
