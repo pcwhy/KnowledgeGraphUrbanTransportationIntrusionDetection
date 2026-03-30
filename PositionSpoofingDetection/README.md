@@ -1,4 +1,4 @@
-# Urban Transportation Sequential IDS
+# Witness Evidence-based Vehicular Position Spoofing Detection
 
 This folder is a GitHub-friendly export of the sequential localization IDS study only.
 
