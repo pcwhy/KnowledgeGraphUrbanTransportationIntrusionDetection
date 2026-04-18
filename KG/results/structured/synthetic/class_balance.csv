@@ -1,0 +1,11 @@
+split,class_label,samples,share
+train,benign,17712,0.984875
+train,phantom_congestion,68,0.003781
+train,signal_spoofing,68,0.003781
+train,false_closure,68,0.003781
+train,position_spoofing,68,0.003781
+test,benign,8208,0.984645
+test,phantom_congestion,32,0.003839
+test,signal_spoofing,32,0.003839
+test,false_closure,32,0.003839
+test,position_spoofing,32,0.003839

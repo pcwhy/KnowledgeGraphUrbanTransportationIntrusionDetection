@@ -1,0 +1,43 @@
+{
+  "seed": 42,
+  "attack_type": "phantom_congestion",
+  "snapshot_tick": 7,
+  "attack_message_id": "m000266",
+  "attacker_id": "V1",
+  "target_segment": "S1",
+  "local_segments": [
+    "S1",
+    "S2",
+    "S3"
+  ],
+  "adjacent_segments": [
+    "S2",
+    "S3"
+  ],
+  "local_rsus": [
+    "R1",
+    "R2"
+  ],
+  "local_intersections": [
+    "I1",
+    "I2"
+  ],
+  "local_controllers": [
+    "C_I1",
+    "C_I2"
+  ],
+  "local_vehicles": [
+    [
+      "V3",
+      "S3"
+    ]
+  ],
+  "densities": {
+    "S1": 0,
+    "S2": 0,
+    "S3": 1
+  },
+  "controller_state": "green",
+  "majority_state": "green",
+  "claimed_density": 4
+}

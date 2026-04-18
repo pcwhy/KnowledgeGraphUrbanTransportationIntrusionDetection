@@ -1,0 +1,18 @@
+setting,city,detector_a,detector_a_label,detector_b,detector_b_label,metric,score_a,score_b,delta_a_minus_b,ci_lower,ci_upper,bootstrap_p,significant_95,paired_messages
+controlled_single_run,,baseline,Baseline,knowledge_graph,Knowledge-graph,macro_f1,0.418855,0.967163,-0.548308,-0.591513,-0.509277,0.0,1,8336
+controlled_single_run,,flat_feature_logistic,Flat-feature logistic,knowledge_graph,Knowledge-graph,macro_f1,0.975353,0.967163,0.00819,0.0,0.021404,0.256,0,8336
+controlled_single_run,,weighted_logistic,Weighted logistic,knowledge_graph,Knowledge-graph,macro_f1,0.975353,0.967163,0.00819,0.0,0.021404,0.256,0,8336
+controlled_single_run,,gaussian_naive_bayes,Gaussian naive Bayes,knowledge_graph,Knowledge-graph,macro_f1,0.903605,0.967163,-0.063558,-0.086709,-0.041078,0.0,1,8336
+controlled_single_run,,knowledge_graph,Knowledge-graph,baseline,Baseline,macro_f1,0.967163,0.418855,0.548308,0.509301,0.591898,0.0,1,8336
+city_single_run,austin,knowledge_graph,Knowledge-graph,baseline,Baseline,macro_f1,0.420907,0.333102,0.087805,0.040671,0.1418,0.0,1,108516
+city_single_run,austin,flat_feature_logistic,Flat-feature logistic,knowledge_graph,Knowledge-graph,macro_f1,0.599978,0.420907,0.179071,0.15076,0.216665,0.0,1,108516
+city_single_run,austin,weighted_logistic,Weighted logistic,knowledge_graph,Knowledge-graph,macro_f1,0.627276,0.420907,0.206369,0.158239,0.251422,0.0,1,108516
+city_single_run,austin,gaussian_naive_bayes,Gaussian naive Bayes,knowledge_graph,Knowledge-graph,macro_f1,0.660632,0.420907,0.239725,0.213965,0.279795,0.0,1,108516
+city_single_run,houston,knowledge_graph,Knowledge-graph,baseline,Baseline,macro_f1,0.325421,0.333095,-0.007674,-0.085107,0.070391,0.77,0,108516
+city_single_run,houston,flat_feature_logistic,Flat-feature logistic,knowledge_graph,Knowledge-graph,macro_f1,0.743982,0.325421,0.418561,0.348583,0.500681,0.0,1,108516
+city_single_run,houston,weighted_logistic,Weighted logistic,knowledge_graph,Knowledge-graph,macro_f1,0.62547,0.325421,0.300048,0.22701,0.37738,0.0,1,108516
+city_single_run,houston,gaussian_naive_bayes,Gaussian naive Bayes,knowledge_graph,Knowledge-graph,macro_f1,0.839254,0.325421,0.513833,0.45321,0.593099,0.0,1,108516
+city_single_run,dallas,knowledge_graph,Knowledge-graph,baseline,Baseline,macro_f1,0.239075,0.334837,-0.095762,-0.132007,-0.050505,0.0,1,108516
+city_single_run,dallas,flat_feature_logistic,Flat-feature logistic,knowledge_graph,Knowledge-graph,macro_f1,0.599978,0.239075,0.360903,0.342349,0.378622,0.0,1,108516
+city_single_run,dallas,weighted_logistic,Weighted logistic,knowledge_graph,Knowledge-graph,macro_f1,0.628385,0.239075,0.38931,0.342192,0.427307,0.0,1,108516
+city_single_run,dallas,gaussian_naive_bayes,Gaussian naive Bayes,knowledge_graph,Knowledge-graph,macro_f1,0.838307,0.239075,0.599232,0.583678,0.617528,0.0,1,108516

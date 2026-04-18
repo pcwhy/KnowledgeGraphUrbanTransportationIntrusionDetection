@@ -1,0 +1,4 @@
+city,active_segments,observed_segments,monitored_intersections,observed_fraction_pct,monitored_fraction_pct,city_specific_logistic_macro_f1,mean_incoming_logistic_delta,mean_outgoing_logistic_delta
+austin,6182,21,16,0.118,0.242,0.6,0.0411,-0.072
+houston,9732,10,8,0.028,0.061,0.744,-0.144,0.0894
+dallas,7734,5,4,0.02,0.043,0.6,0.0483,-0.072

@@ -1,0 +1,5 @@
+variant,macro_recall,macro_f1,relative_f1_degradation_pct,latency
+full_kg,0.9437,0.9672,0.0,0.0968
+kg_no_topology,0.8,0.7996,17.33,0
+kg_no_rsu,0.4,0.3988,58.77,0
+kg_no_crowd,0.9437,0.9672,0.0,0.0968

@@ -1,0 +1,6 @@
+detector,accuracy,macro_precision,macro_recall,balanced_accuracy,macro_f1,average_latency
+baseline,0.986,0.4977,0.4119,0.4119,0.4189,1
+flat_feature_logistic,0.9992,0.9998,0.9563,0.9563,0.9754,0.0968
+weighted_logistic,0.9992,0.9998,0.9563,0.9563,0.9754,0.0968
+gaussian_naive_bayes,0.9945,0.878,0.9553,0.9553,0.9036,0.0968
+knowledge_graph,0.9989,0.9998,0.9437,0.9437,0.9672,0.0968

@@ -1,0 +1,4 @@
+coverage_level,coverage_scale,mean_observed_fraction,baseline_macro_f1,flat_feature_logistic_macro_f1,weighted_logistic_macro_f1,gaussian_naive_bayes_macro_f1,knowledge_graph_macro_f1,kg_std_macro_f1,num_runs
+Nominal,1.0,0.000553,0.333667,0.648,0.627067,0.7794,0.328467,0.074251,3
+Reduced,0.5,0.000293,0.334267,0.6951,0.6565,0.8757,0.323133,0.074034,3
+Sparse,0.25,0.000167,0.3366,0.669833,0.640833,0.816167,0.3192,0.075586,3

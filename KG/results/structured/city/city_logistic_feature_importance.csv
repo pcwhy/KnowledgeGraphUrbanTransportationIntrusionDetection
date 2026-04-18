@@ -1,0 +1,211 @@
+city,class,feature,coefficient,abs_coefficient
+austin,benign,Congestion alert,-0.078554,0.078554
+austin,benign,Closure alert,-0.021165,0.021165
+austin,benign,Signal report,-0.029599,0.029599
+austin,benign,Position claim,0.079382,0.079382
+austin,benign,Sender is RSU,0.091068,0.091068
+austin,benign,Density gap,0.106291,0.106291
+austin,benign,Observed RSU density,0.030728,0.030728
+austin,benign,Sender near segment,0.022057,0.022057
+austin,benign,Closure flag,-0.021165,0.021165
+austin,benign,Adjacent flow,0.03225,0.03225
+austin,benign,Controller mismatch,0.049213,0.049213
+austin,benign,Majority mismatch,-0.026469,0.026469
+austin,benign,Adjacency violation,-0.063366,0.063366
+austin,benign,RSU region change,0.032217,0.032217
+austin,phantom_congestion,Congestion alert,0.123607,0.123607
+austin,phantom_congestion,Closure alert,-0.01312,0.01312
+austin,phantom_congestion,Signal report,-0.012555,0.012555
+austin,phantom_congestion,Position claim,-0.070731,0.070731
+austin,phantom_congestion,Sender is RSU,-0.015208,0.015208
+austin,phantom_congestion,Density gap,-0.080043,0.080043
+austin,phantom_congestion,Observed RSU density,-0.020787,0.020787
+austin,phantom_congestion,Sender near segment,-0.044888,0.044888
+austin,phantom_congestion,Closure flag,-0.01312,0.01312
+austin,phantom_congestion,Adjacent flow,-0.003641,0.003641
+austin,phantom_congestion,Controller mismatch,0.000799,0.000799
+austin,phantom_congestion,Majority mismatch,-0.012359,0.012359
+austin,phantom_congestion,Adjacency violation,-0.001065,0.001065
+austin,phantom_congestion,RSU region change,0.012499,0.012499
+austin,signal_spoofing,Congestion alert,-0.016525,0.016525
+austin,signal_spoofing,Closure alert,-0.011664,0.011664
+austin,signal_spoofing,Signal report,0.036193,0.036193
+austin,signal_spoofing,Position claim,-0.009639,0.009639
+austin,signal_spoofing,Sender is RSU,0.029655,0.029655
+austin,signal_spoofing,Density gap,-0.009647,0.009647
+austin,signal_spoofing,Observed RSU density,-0.003743,0.003743
+austin,signal_spoofing,Sender near segment,-0.000479,0.000479
+austin,signal_spoofing,Closure flag,-0.011664,0.011664
+austin,signal_spoofing,Adjacent flow,0.002159,0.002159
+austin,signal_spoofing,Controller mismatch,-0.063878,0.063878
+austin,signal_spoofing,Majority mismatch,0.047369,0.047369
+austin,signal_spoofing,Adjacency violation,-0.001444,0.001444
+austin,signal_spoofing,RSU region change,-0.035784,0.035784
+austin,false_closure,Congestion alert,-0.016745,0.016745
+austin,false_closure,Closure alert,0.052697,0.052697
+austin,false_closure,Signal report,0.008402,0.008402
+austin,false_closure,Position claim,-0.010679,0.010679
+austin,false_closure,Sender is RSU,-0.101512,0.101512
+austin,false_closure,Density gap,-0.010255,0.010255
+austin,false_closure,Observed RSU density,-0.003062,0.003062
+austin,false_closure,Sender near segment,0.020741,0.020741
+austin,false_closure,Closure flag,0.052697,0.052697
+austin,false_closure,Adjacent flow,-0.033969,0.033969
+austin,false_closure,Controller mismatch,0.009251,0.009251
+austin,false_closure,Majority mismatch,-0.001063,0.001063
+austin,false_closure,Adjacency violation,-0.000623,0.000623
+austin,false_closure,RSU region change,-0.00832,0.00832
+austin,position_spoofing,Congestion alert,-0.011783,0.011783
+austin,position_spoofing,Closure alert,-0.006748,0.006748
+austin,position_spoofing,Signal report,-0.002441,0.002441
+austin,position_spoofing,Position claim,0.011666,0.011666
+austin,position_spoofing,Sender is RSU,-0.004003,0.004003
+austin,position_spoofing,Density gap,-0.006346,0.006346
+austin,position_spoofing,Observed RSU density,-0.003136,0.003136
+austin,position_spoofing,Sender near segment,0.002569,0.002569
+austin,position_spoofing,Closure flag,-0.006748,0.006748
+austin,position_spoofing,Adjacent flow,0.003202,0.003202
+austin,position_spoofing,Controller mismatch,0.004615,0.004615
+austin,position_spoofing,Majority mismatch,-0.007478,0.007478
+austin,position_spoofing,Adjacency violation,0.066499,0.066499
+austin,position_spoofing,RSU region change,-0.000611,0.000611
+houston,benign,Congestion alert,-0.084722,0.084722
+houston,benign,Closure alert,-0.020357,0.020357
+houston,benign,Signal report,-0.030467,0.030467
+houston,benign,Position claim,0.08387,0.08387
+houston,benign,Sender is RSU,0.086612,0.086612
+houston,benign,Density gap,0.10989,0.10989
+houston,benign,Observed RSU density,0.01847,0.01847
+houston,benign,Sender near segment,0.022935,0.022935
+houston,benign,Closure flag,-0.020357,0.020357
+houston,benign,Adjacent flow,0.030972,0.030972
+houston,benign,Controller mismatch,0.05178,0.05178
+houston,benign,Majority mismatch,-0.016856,0.016856
+houston,benign,Adjacency violation,-0.061646,0.061646
+houston,benign,RSU region change,0.039392,0.039392
+houston,phantom_congestion,Congestion alert,0.12805,0.12805
+houston,phantom_congestion,Closure alert,-0.013361,0.013361
+houston,phantom_congestion,Signal report,-0.014888,0.014888
+houston,phantom_congestion,Position claim,-0.072077,0.072077
+houston,phantom_congestion,Sender is RSU,-0.017495,0.017495
+houston,phantom_congestion,Density gap,-0.081809,0.081809
+houston,phantom_congestion,Observed RSU density,-0.006046,0.006046
+houston,phantom_congestion,Sender near segment,-0.045921,0.045921
+houston,phantom_congestion,Closure flag,-0.013361,0.013361
+houston,phantom_congestion,Adjacent flow,2.3e-05,2.3e-05
+houston,phantom_congestion,Controller mismatch,0.000193,0.000193
+houston,phantom_congestion,Majority mismatch,-0.007881,0.007881
+houston,phantom_congestion,Adjacency violation,-0.000559,0.000559
+houston,phantom_congestion,RSU region change,0.014617,0.014617
+houston,signal_spoofing,Congestion alert,-0.016327,0.016327
+houston,signal_spoofing,Closure alert,-0.012805,0.012805
+houston,signal_spoofing,Signal report,0.043188,0.043188
+houston,signal_spoofing,Position claim,-0.014129,0.014129
+houston,signal_spoofing,Sender is RSU,0.035657,0.035657
+houston,signal_spoofing,Density gap,-0.011985,0.011985
+houston,signal_spoofing,Observed RSU density,-5e-06,5e-06
+houston,signal_spoofing,Sender near segment,-0.00093,0.00093
+houston,signal_spoofing,Closure flag,-0.012805,0.012805
+houston,signal_spoofing,Adjacent flow,0.002496,0.002496
+houston,signal_spoofing,Controller mismatch,-0.065034,0.065034
+houston,signal_spoofing,Majority mismatch,0.031864,0.031864
+houston,signal_spoofing,Adjacency violation,-0.003115,0.003115
+houston,signal_spoofing,RSU region change,-0.041747,0.041747
+houston,false_closure,Congestion alert,-0.016382,0.016382
+houston,false_closure,Closure alert,0.053044,0.053044
+houston,false_closure,Signal report,0.007488,0.007488
+houston,false_closure,Position claim,-0.010414,0.010414
+houston,false_closure,Sender is RSU,-0.098195,0.098195
+houston,false_closure,Density gap,-0.008581,0.008581
+houston,false_closure,Observed RSU density,-0.013057,0.013057
+houston,false_closure,Sender near segment,0.0206,0.0206
+houston,false_closure,Closure flag,0.053044,0.053044
+houston,false_closure,Adjacent flow,-0.037615,0.037615
+houston,false_closure,Controller mismatch,0.009276,0.009276
+houston,false_closure,Majority mismatch,-0.001658,0.001658
+houston,false_closure,Adjacency violation,-0.000643,0.000643
+houston,false_closure,RSU region change,-0.007277,0.007277
+houston,position_spoofing,Congestion alert,-0.010619,0.010619
+houston,position_spoofing,Closure alert,-0.006521,0.006521
+houston,position_spoofing,Signal report,-0.00532,0.00532
+houston,position_spoofing,Position claim,0.012751,0.012751
+houston,position_spoofing,Sender is RSU,-0.00658,0.00658
+houston,position_spoofing,Density gap,-0.007516,0.007516
+houston,position_spoofing,Observed RSU density,0.000637,0.000637
+houston,position_spoofing,Sender near segment,0.003316,0.003316
+houston,position_spoofing,Closure flag,-0.006521,0.006521
+houston,position_spoofing,Adjacent flow,0.004124,0.004124
+houston,position_spoofing,Controller mismatch,0.003785,0.003785
+houston,position_spoofing,Majority mismatch,-0.005468,0.005468
+houston,position_spoofing,Adjacency violation,0.065962,0.065962
+houston,position_spoofing,RSU region change,-0.004985,0.004985
+dallas,benign,Congestion alert,-0.083304,0.083304
+dallas,benign,Closure alert,-0.020489,0.020489
+dallas,benign,Signal report,-0.029558,0.029558
+dallas,benign,Position claim,0.082343,0.082343
+dallas,benign,Sender is RSU,0.090645,0.090645
+dallas,benign,Density gap,0.105604,0.105604
+dallas,benign,Observed RSU density,0.027276,0.027276
+dallas,benign,Sender near segment,0.023389,0.023389
+dallas,benign,Closure flag,-0.020489,0.020489
+dallas,benign,Adjacent flow,0.028688,0.028688
+dallas,benign,Controller mismatch,0.050228,0.050228
+dallas,benign,Majority mismatch,-0.017957,0.017957
+dallas,benign,Adjacency violation,-0.060177,0.060177
+dallas,benign,RSU region change,0.042281,0.042281
+dallas,phantom_congestion,Congestion alert,0.126767,0.126767
+dallas,phantom_congestion,Closure alert,-0.013206,0.013206
+dallas,phantom_congestion,Signal report,-0.014372,0.014372
+dallas,phantom_congestion,Position claim,-0.071609,0.071609
+dallas,phantom_congestion,Sender is RSU,-0.016934,0.016934
+dallas,phantom_congestion,Density gap,-0.077688,0.077688
+dallas,phantom_congestion,Observed RSU density,-0.013533,0.013533
+dallas,phantom_congestion,Sender near segment,-0.04697,0.04697
+dallas,phantom_congestion,Closure flag,-0.013206,0.013206
+dallas,phantom_congestion,Adjacent flow,-0.003205,0.003205
+dallas,phantom_congestion,Controller mismatch,8.8e-05,8.8e-05
+dallas,phantom_congestion,Majority mismatch,-0.010427,0.010427
+dallas,phantom_congestion,Adjacency violation,-0.000206,0.000206
+dallas,phantom_congestion,RSU region change,0.014054,0.014054
+dallas,signal_spoofing,Congestion alert,-0.016398,0.016398
+dallas,signal_spoofing,Closure alert,-0.012748,0.012748
+dallas,signal_spoofing,Signal report,0.042441,0.042441
+dallas,signal_spoofing,Position claim,-0.013596,0.013596
+dallas,signal_spoofing,Sender is RSU,0.034982,0.034982
+dallas,signal_spoofing,Density gap,-0.011969,0.011969
+dallas,signal_spoofing,Observed RSU density,-0.001528,0.001528
+dallas,signal_spoofing,Sender near segment,-0.000845,0.000845
+dallas,signal_spoofing,Closure flag,-0.012748,0.012748
+dallas,signal_spoofing,Adjacent flow,0.002744,0.002744
+dallas,signal_spoofing,Controller mismatch,-0.062834,0.062834
+dallas,signal_spoofing,Majority mismatch,0.035729,0.035729
+dallas,signal_spoofing,Adjacency violation,-0.003858,0.003858
+dallas,signal_spoofing,RSU region change,-0.040505,0.040505
+dallas,false_closure,Congestion alert,-0.016444,0.016444
+dallas,false_closure,Closure alert,0.052841,0.052841
+dallas,false_closure,Signal report,0.007573,0.007573
+dallas,false_closure,Position claim,-0.010367,0.010367
+dallas,false_closure,Sender is RSU,-0.10147,0.10147
+dallas,false_closure,Density gap,-0.008418,0.008418
+dallas,false_closure,Observed RSU density,-0.01157,0.01157
+dallas,false_closure,Sender near segment,0.021072,0.021072
+dallas,false_closure,Closure flag,0.052841,0.052841
+dallas,false_closure,Adjacent flow,-0.032399,0.032399
+dallas,false_closure,Controller mismatch,0.00926,0.00926
+dallas,false_closure,Majority mismatch,-0.000479,0.000479
+dallas,false_closure,Adjacency violation,-0.000613,0.000613
+dallas,false_closure,RSU region change,-0.007244,0.007244
+dallas,position_spoofing,Congestion alert,-0.010621,0.010621
+dallas,position_spoofing,Closure alert,-0.006398,0.006398
+dallas,position_spoofing,Signal report,-0.006084,0.006084
+dallas,position_spoofing,Position claim,0.013229,0.013229
+dallas,position_spoofing,Sender is RSU,-0.007224,0.007224
+dallas,position_spoofing,Density gap,-0.007528,0.007528
+dallas,position_spoofing,Observed RSU density,-0.000644,0.000644
+dallas,position_spoofing,Sender near segment,0.003355,0.003355
+dallas,position_spoofing,Closure flag,-0.006398,0.006398
+dallas,position_spoofing,Adjacent flow,0.004172,0.004172
+dallas,position_spoofing,Controller mismatch,0.003258,0.003258
+dallas,position_spoofing,Majority mismatch,-0.006867,0.006867
+dallas,position_spoofing,Adjacency violation,0.064854,0.064854
+dallas,position_spoofing,RSU region change,-0.008586,0.008586

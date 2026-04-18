@@ -1,0 +1,4 @@
+threshold,mean_macro_recall,std_macro_recall,mean_macro_f1,std_macro_f1,mean_position_recall,std_position_recall,num_seeds
+1,0.966971,0.023571,0.980986,0.014663,0.834843,0.117778,7
+2,0.925029,0.026513,0.952071,0.020441,0.625,0.132552,7
+3,0.6616,0.029799,0.712671,0.025971,0.0,0.0,7

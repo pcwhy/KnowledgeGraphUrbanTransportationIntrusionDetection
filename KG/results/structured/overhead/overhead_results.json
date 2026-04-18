@@ -1,0 +1,356 @@
+{
+  "train_episodes": 82,
+  "test_episodes": 38,
+  "logistic_training": {
+    "full": {
+      "mean_seconds": 15.46829813525879,
+      "std_seconds": 0.5539237402322408,
+      "min_seconds": 14.952689872123301,
+      "max_seconds": 16.47702082665637
+    },
+    "no_rsu": {
+      "mean_seconds": 16.029011373740754,
+      "std_seconds": 1.4027296978223514,
+      "min_seconds": 14.90223609097302,
+      "max_seconds": 18.24152812641114
+    },
+    "no_topology": {
+      "mean_seconds": 16.59697427600622,
+      "std_seconds": 0.9096169398300431,
+      "min_seconds": 15.771537064108998,
+      "max_seconds": 18.35834766132757
+    }
+  },
+  "kg_initialization": {
+    "full": {
+      "mean_seconds": 7.725594146177173e-05,
+      "std_seconds": 1.4277552002473408e-05,
+      "min_seconds": 6.948504596948624e-05,
+      "max_seconds": 0.0005201660096645355
+    },
+    "no_rsu": {
+      "mean_seconds": 7.70240572746843e-05,
+      "std_seconds": 1.1247670722653705e-05,
+      "min_seconds": 7.028086110949516e-05,
+      "max_seconds": 0.0003128908574581146
+    },
+    "no_topology": {
+      "mean_seconds": 7.823165459558367e-05,
+      "std_seconds": 1.1581862210766212e-05,
+      "min_seconds": 7.030600681900978e-05,
+      "max_seconds": 0.0002903090789914131
+    }
+  },
+  "episode_evaluation": {
+    "logistic_full": {
+      "mean_seconds": 0.4566747315227985,
+      "std_seconds": 0.019317825526767824,
+      "min_seconds": 0.44164115795865655,
+      "max_seconds": 0.48923335690051317,
+      "messages": 22700,
+      "mean_us_per_message": 20.117829582502136
+    },
+    "kg_full": {
+      "mean_seconds": 0.223238851968199,
+      "std_seconds": 0.0403483010436707,
+      "min_seconds": 0.20363464672118425,
+      "max_seconds": 0.2953752498142421,
+      "messages": 22700,
+      "mean_us_per_message": 9.834310659392026
+    },
+    "baseline": {
+      "mean_seconds": 0.01635214975103736,
+      "std_seconds": 0.0005803246984711106,
+      "min_seconds": 0.015678809955716133,
+      "max_seconds": 0.01720394194126129,
+      "messages": 22700,
+      "mean_us_per_message": 0.7203590198694872
+    }
+  },
+  "reconfigured_performance": {
+    "logistic_no_rsu": {
+      "detector": "logistic_no_rsu",
+      "accuracy": 0.9989,
+      "macro_precision": 0.9998,
+      "macro_recall": 0.9437,
+      "macro_f1": 0.9672,
+      "average_latency": 0.0968,
+      "confusion_matrix": {
+        "benign": {
+          "benign": 8208,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "phantom_congestion": {
+          "benign": 0,
+          "phantom_congestion": 32,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "signal_spoofing": {
+          "benign": 0,
+          "phantom_congestion": 0,
+          "signal_spoofing": 32,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "false_closure": {
+          "benign": 0,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 32,
+          "position_spoofing": 0
+        },
+        "position_spoofing": {
+          "benign": 9,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 23
+        }
+      },
+      "per_attack": {
+        "phantom_congestion": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "signal_spoofing": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "false_closure": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "position_spoofing": {
+          "precision": 1.0,
+          "recall": 0.7188,
+          "f1": 0.8364,
+          "average_latency": 0.4286
+        }
+      }
+    },
+    "logistic_no_topology": {
+      "detector": "logistic_no_topology",
+      "accuracy": 0.9962,
+      "macro_precision": 0.7992,
+      "macro_recall": 0.8,
+      "macro_f1": 0.7996,
+      "average_latency": 0,
+      "confusion_matrix": {
+        "benign": {
+          "benign": 8208,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "phantom_congestion": {
+          "benign": 0,
+          "phantom_congestion": 32,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "signal_spoofing": {
+          "benign": 0,
+          "phantom_congestion": 0,
+          "signal_spoofing": 32,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "false_closure": {
+          "benign": 0,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 32,
+          "position_spoofing": 0
+        },
+        "position_spoofing": {
+          "benign": 32,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        }
+      },
+      "per_attack": {
+        "phantom_congestion": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "signal_spoofing": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "false_closure": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "position_spoofing": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "average_latency": 0.0
+        }
+      }
+    },
+    "kg_no_rsu": {
+      "detector": "kg_no_rsu",
+      "accuracy": 0.9885,
+      "macro_precision": 0.3977,
+      "macro_recall": 0.4,
+      "macro_f1": 0.3988,
+      "average_latency": 0,
+      "confusion_matrix": {
+        "benign": {
+          "benign": 8208,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "phantom_congestion": {
+          "benign": 32,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "signal_spoofing": {
+          "benign": 0,
+          "phantom_congestion": 0,
+          "signal_spoofing": 32,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "false_closure": {
+          "benign": 32,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "position_spoofing": {
+          "benign": 32,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        }
+      },
+      "per_attack": {
+        "phantom_congestion": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "average_latency": 0.0
+        },
+        "signal_spoofing": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "false_closure": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "average_latency": 0.0
+        },
+        "position_spoofing": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "average_latency": 0.0
+        }
+      }
+    },
+    "kg_no_topology": {
+      "detector": "kg_no_topology",
+      "accuracy": 0.9962,
+      "macro_precision": 0.7992,
+      "macro_recall": 0.8,
+      "macro_f1": 0.7996,
+      "average_latency": 0,
+      "confusion_matrix": {
+        "benign": {
+          "benign": 8208,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "phantom_congestion": {
+          "benign": 0,
+          "phantom_congestion": 32,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "signal_spoofing": {
+          "benign": 0,
+          "phantom_congestion": 0,
+          "signal_spoofing": 32,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "false_closure": {
+          "benign": 0,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 32,
+          "position_spoofing": 0
+        },
+        "position_spoofing": {
+          "benign": 32,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        }
+      },
+      "per_attack": {
+        "phantom_congestion": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "signal_spoofing": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "false_closure": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "position_spoofing": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "average_latency": 0.0
+        }
+      }
+    }
+  }
+}

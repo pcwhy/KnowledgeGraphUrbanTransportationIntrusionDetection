@@ -1,0 +1,15 @@
+feature,importance
+Position claim,0.974092
+RSU region change,0.710533
+Adjacency violation,0.674964
+Congestion alert,0.618924
+Closure alert,0.558647
+Closure flag,0.558647
+Signal report,0.552595
+Sender is RSU,0.552595
+Controller mismatch,0.552595
+Majority mismatch,0.478162
+Density gap,0.136327
+Adjacent flow,0.086196
+Observed RSU density,0.070759
+Sender near segment,0.070688

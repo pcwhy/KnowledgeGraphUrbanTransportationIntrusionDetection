@@ -1,0 +1,4 @@
+city,route_library_seed,episode_seed_start,episode_seed_end,active_segments,comparable_segments,log_pearson_r,spearman_rho,top_decile_overlap_pct
+austin,42,42,73,6182,6182,0.311,0.2921,28.5
+houston,43,43,74,9732,9732,0.2858,0.2284,31.0
+dallas,44,44,75,7734,7734,0.3166,0.2862,32.2

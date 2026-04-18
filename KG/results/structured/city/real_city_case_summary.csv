@@ -1,0 +1,4 @@
+city,place,nodes,edges,mean_aadt,max_aadt,routes_sampled,mean_route_km,attack_edges
+austin,"Austin, Texas, USA",6648,17772,5643.46,183680,28,6.98,3
+houston,"Houston, Texas, USA",13109,35913,10038.84,266410,28,8.87,3
+dallas,"Dallas, Texas, USA",9376,24973,10585.62,280794,28,6.52,3

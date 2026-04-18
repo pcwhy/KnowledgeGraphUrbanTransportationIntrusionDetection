@@ -1,0 +1,10 @@
+source_city,target_city,baseline_macro_f1,logistic_macro_f1,kg_macro_f1,delta_baseline_macro_f1,delta_logistic_macro_f1,delta_kg_macro_f1
+austin,austin,0.3331,0.6,0.4209,0.0,0.0,0.0
+austin,houston,0.3331,0.6,0.3254,0.0,-0.144,0.0
+austin,dallas,0.3348,0.6,0.2391,0.0,0.0,0.0
+houston,austin,0.3331,0.6823,0.4209,0.0,0.0823,0.0
+houston,houston,0.3331,0.744,0.3254,0.0,0.0,0.0
+houston,dallas,0.3348,0.6965,0.2391,0.0,0.0965,0.0
+dallas,austin,0.3331,0.6,0.4209,0.0,0.0,0.0
+dallas,houston,0.3331,0.6,0.3254,0.0,-0.144,0.0
+dallas,dallas,0.3348,0.6,0.2391,0.0,0.0,0.0

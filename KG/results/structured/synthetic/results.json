@@ -1,0 +1,770 @@
+{
+  "seed": 42,
+  "episodes_per_case": 25,
+  "train_episodes": 82,
+  "test_episodes": 38,
+  "class_distribution": {
+    "train": [
+      {
+        "class_label": "benign",
+        "samples": 17712,
+        "share": 0.984875
+      },
+      {
+        "class_label": "phantom_congestion",
+        "samples": 68,
+        "share": 0.003781
+      },
+      {
+        "class_label": "signal_spoofing",
+        "samples": 68,
+        "share": 0.003781
+      },
+      {
+        "class_label": "false_closure",
+        "samples": 68,
+        "share": 0.003781
+      },
+      {
+        "class_label": "position_spoofing",
+        "samples": 68,
+        "share": 0.003781
+      }
+    ],
+    "test": [
+      {
+        "class_label": "benign",
+        "samples": 8208,
+        "share": 0.984645
+      },
+      {
+        "class_label": "phantom_congestion",
+        "samples": 32,
+        "share": 0.003839
+      },
+      {
+        "class_label": "signal_spoofing",
+        "samples": 32,
+        "share": 0.003839
+      },
+      {
+        "class_label": "false_closure",
+        "samples": 32,
+        "share": 0.003839
+      },
+      {
+        "class_label": "position_spoofing",
+        "samples": 32,
+        "share": 0.003839
+      }
+    ]
+  },
+  "baseline": {
+    "detector": "baseline",
+    "accuracy": 0.986,
+    "macro_precision": 0.4977,
+    "macro_recall": 0.4119,
+    "balanced_accuracy": 0.4119,
+    "macro_f1": 0.4189,
+    "average_latency": 1,
+    "confusion_matrix": {
+      "benign": {
+        "benign": 8185,
+        "phantom_congestion": 0,
+        "signal_spoofing": 0,
+        "false_closure": 0,
+        "position_spoofing": 23
+      },
+      "phantom_congestion": {
+        "benign": 32,
+        "phantom_congestion": 0,
+        "signal_spoofing": 0,
+        "false_closure": 0,
+        "position_spoofing": 0
+      },
+      "signal_spoofing": {
+        "benign": 32,
+        "phantom_congestion": 0,
+        "signal_spoofing": 0,
+        "false_closure": 0,
+        "position_spoofing": 0
+      },
+      "false_closure": {
+        "benign": 21,
+        "phantom_congestion": 0,
+        "signal_spoofing": 0,
+        "false_closure": 11,
+        "position_spoofing": 0
+      },
+      "position_spoofing": {
+        "benign": 9,
+        "phantom_congestion": 0,
+        "signal_spoofing": 0,
+        "false_closure": 0,
+        "position_spoofing": 23
+      }
+    },
+    "per_attack": {
+      "phantom_congestion": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "average_latency": 0.0
+      },
+      "signal_spoofing": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "average_latency": 0.0
+      },
+      "false_closure": {
+        "precision": 1.0,
+        "recall": 0.3438,
+        "f1": 0.5116,
+        "average_latency": 1.8
+      },
+      "position_spoofing": {
+        "precision": 0.5,
+        "recall": 0.7188,
+        "f1": 0.5897,
+        "average_latency": 0.4286
+      }
+    }
+  },
+  "flat_feature_logistic": {
+    "detector": "flat_feature_logistic",
+    "accuracy": 0.9992,
+    "macro_precision": 0.9998,
+    "macro_recall": 0.9563,
+    "balanced_accuracy": 0.9563,
+    "macro_f1": 0.9754,
+    "average_latency": 0.0968,
+    "confusion_matrix": {
+      "benign": {
+        "benign": 8208,
+        "phantom_congestion": 0,
+        "signal_spoofing": 0,
+        "false_closure": 0,
+        "position_spoofing": 0
+      },
+      "phantom_congestion": {
+        "benign": 0,
+        "phantom_congestion": 32,
+        "signal_spoofing": 0,
+        "false_closure": 0,
+        "position_spoofing": 0
+      },
+      "signal_spoofing": {
+        "benign": 0,
+        "phantom_congestion": 0,
+        "signal_spoofing": 32,
+        "false_closure": 0,
+        "position_spoofing": 0
+      },
+      "false_closure": {
+        "benign": 0,
+        "phantom_congestion": 0,
+        "signal_spoofing": 0,
+        "false_closure": 32,
+        "position_spoofing": 0
+      },
+      "position_spoofing": {
+        "benign": 7,
+        "phantom_congestion": 0,
+        "signal_spoofing": 0,
+        "false_closure": 0,
+        "position_spoofing": 25
+      }
+    },
+    "per_attack": {
+      "phantom_congestion": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "average_latency": 0
+      },
+      "signal_spoofing": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "average_latency": 0
+      },
+      "false_closure": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "average_latency": 0
+      },
+      "position_spoofing": {
+        "precision": 1.0,
+        "recall": 0.7812,
+        "f1": 0.8772,
+        "average_latency": 0.4286
+      }
+    }
+  },
+  "weighted_logistic": {
+    "detector": "weighted_logistic",
+    "accuracy": 0.9992,
+    "macro_precision": 0.9998,
+    "macro_recall": 0.9563,
+    "balanced_accuracy": 0.9563,
+    "macro_f1": 0.9754,
+    "average_latency": 0.0968,
+    "confusion_matrix": {
+      "benign": {
+        "benign": 8208,
+        "phantom_congestion": 0,
+        "signal_spoofing": 0,
+        "false_closure": 0,
+        "position_spoofing": 0
+      },
+      "phantom_congestion": {
+        "benign": 0,
+        "phantom_congestion": 32,
+        "signal_spoofing": 0,
+        "false_closure": 0,
+        "position_spoofing": 0
+      },
+      "signal_spoofing": {
+        "benign": 0,
+        "phantom_congestion": 0,
+        "signal_spoofing": 32,
+        "false_closure": 0,
+        "position_spoofing": 0
+      },
+      "false_closure": {
+        "benign": 0,
+        "phantom_congestion": 0,
+        "signal_spoofing": 0,
+        "false_closure": 32,
+        "position_spoofing": 0
+      },
+      "position_spoofing": {
+        "benign": 7,
+        "phantom_congestion": 0,
+        "signal_spoofing": 0,
+        "false_closure": 0,
+        "position_spoofing": 25
+      }
+    },
+    "per_attack": {
+      "phantom_congestion": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "average_latency": 0
+      },
+      "signal_spoofing": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "average_latency": 0
+      },
+      "false_closure": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "average_latency": 0
+      },
+      "position_spoofing": {
+        "precision": 1.0,
+        "recall": 0.7812,
+        "f1": 0.8772,
+        "average_latency": 0.4286
+      }
+    }
+  },
+  "gaussian_naive_bayes": {
+    "detector": "gaussian_naive_bayes",
+    "accuracy": 0.9945,
+    "macro_precision": 0.878,
+    "macro_recall": 0.9553,
+    "balanced_accuracy": 0.9553,
+    "macro_f1": 0.9036,
+    "average_latency": 0.0968,
+    "confusion_matrix": {
+      "benign": {
+        "benign": 8169,
+        "phantom_congestion": 0,
+        "signal_spoofing": 0,
+        "false_closure": 0,
+        "position_spoofing": 39
+      },
+      "phantom_congestion": {
+        "benign": 0,
+        "phantom_congestion": 32,
+        "signal_spoofing": 0,
+        "false_closure": 0,
+        "position_spoofing": 0
+      },
+      "signal_spoofing": {
+        "benign": 0,
+        "phantom_congestion": 0,
+        "signal_spoofing": 32,
+        "false_closure": 0,
+        "position_spoofing": 0
+      },
+      "false_closure": {
+        "benign": 0,
+        "phantom_congestion": 0,
+        "signal_spoofing": 0,
+        "false_closure": 32,
+        "position_spoofing": 0
+      },
+      "position_spoofing": {
+        "benign": 7,
+        "phantom_congestion": 0,
+        "signal_spoofing": 0,
+        "false_closure": 0,
+        "position_spoofing": 25
+      }
+    },
+    "per_attack": {
+      "phantom_congestion": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "average_latency": 0
+      },
+      "signal_spoofing": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "average_latency": 0
+      },
+      "false_closure": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "average_latency": 0
+      },
+      "position_spoofing": {
+        "precision": 0.8929,
+        "recall": 0.7812,
+        "f1": 0.8333,
+        "average_latency": 0.4286
+      }
+    }
+  },
+  "knowledge_graph": {
+    "detector": "knowledge_graph",
+    "accuracy": 0.9989,
+    "macro_precision": 0.9998,
+    "macro_recall": 0.9437,
+    "balanced_accuracy": 0.9437,
+    "macro_f1": 0.9672,
+    "average_latency": 0.0968,
+    "confusion_matrix": {
+      "benign": {
+        "benign": 8208,
+        "phantom_congestion": 0,
+        "signal_spoofing": 0,
+        "false_closure": 0,
+        "position_spoofing": 0
+      },
+      "phantom_congestion": {
+        "benign": 0,
+        "phantom_congestion": 32,
+        "signal_spoofing": 0,
+        "false_closure": 0,
+        "position_spoofing": 0
+      },
+      "signal_spoofing": {
+        "benign": 0,
+        "phantom_congestion": 0,
+        "signal_spoofing": 32,
+        "false_closure": 0,
+        "position_spoofing": 0
+      },
+      "false_closure": {
+        "benign": 0,
+        "phantom_congestion": 0,
+        "signal_spoofing": 0,
+        "false_closure": 32,
+        "position_spoofing": 0
+      },
+      "position_spoofing": {
+        "benign": 9,
+        "phantom_congestion": 0,
+        "signal_spoofing": 0,
+        "false_closure": 0,
+        "position_spoofing": 23
+      }
+    },
+    "per_attack": {
+      "phantom_congestion": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "average_latency": 0
+      },
+      "signal_spoofing": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "average_latency": 0
+      },
+      "false_closure": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "average_latency": 0
+      },
+      "position_spoofing": {
+        "precision": 1.0,
+        "recall": 0.7188,
+        "f1": 0.8364,
+        "average_latency": 0.4286
+      }
+    }
+  },
+  "ablations": {
+    "full_kg": {
+      "detector": "full_kg",
+      "accuracy": 0.9989,
+      "macro_precision": 0.9998,
+      "macro_recall": 0.9437,
+      "balanced_accuracy": 0.9437,
+      "macro_f1": 0.9672,
+      "average_latency": 0.0968,
+      "confusion_matrix": {
+        "benign": {
+          "benign": 8208,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "phantom_congestion": {
+          "benign": 0,
+          "phantom_congestion": 32,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "signal_spoofing": {
+          "benign": 0,
+          "phantom_congestion": 0,
+          "signal_spoofing": 32,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "false_closure": {
+          "benign": 0,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 32,
+          "position_spoofing": 0
+        },
+        "position_spoofing": {
+          "benign": 9,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 23
+        }
+      },
+      "per_attack": {
+        "phantom_congestion": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "signal_spoofing": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "false_closure": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "position_spoofing": {
+          "precision": 1.0,
+          "recall": 0.7188,
+          "f1": 0.8364,
+          "average_latency": 0.4286
+        }
+      }
+    },
+    "kg_no_topology": {
+      "detector": "kg_no_topology",
+      "accuracy": 0.9962,
+      "macro_precision": 0.7992,
+      "macro_recall": 0.8,
+      "balanced_accuracy": 0.8,
+      "macro_f1": 0.7996,
+      "average_latency": 0,
+      "confusion_matrix": {
+        "benign": {
+          "benign": 8208,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "phantom_congestion": {
+          "benign": 0,
+          "phantom_congestion": 32,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "signal_spoofing": {
+          "benign": 0,
+          "phantom_congestion": 0,
+          "signal_spoofing": 32,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "false_closure": {
+          "benign": 0,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 32,
+          "position_spoofing": 0
+        },
+        "position_spoofing": {
+          "benign": 32,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        }
+      },
+      "per_attack": {
+        "phantom_congestion": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "signal_spoofing": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "false_closure": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "position_spoofing": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "average_latency": 0.0
+        }
+      }
+    },
+    "kg_no_rsu": {
+      "detector": "kg_no_rsu",
+      "accuracy": 0.9885,
+      "macro_precision": 0.3977,
+      "macro_recall": 0.4,
+      "balanced_accuracy": 0.4,
+      "macro_f1": 0.3988,
+      "average_latency": 0,
+      "confusion_matrix": {
+        "benign": {
+          "benign": 8208,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "phantom_congestion": {
+          "benign": 32,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "signal_spoofing": {
+          "benign": 0,
+          "phantom_congestion": 0,
+          "signal_spoofing": 32,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "false_closure": {
+          "benign": 32,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "position_spoofing": {
+          "benign": 32,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        }
+      },
+      "per_attack": {
+        "phantom_congestion": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "average_latency": 0.0
+        },
+        "signal_spoofing": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "false_closure": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "average_latency": 0.0
+        },
+        "position_spoofing": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "average_latency": 0.0
+        }
+      }
+    },
+    "kg_no_crowd": {
+      "detector": "kg_no_crowd",
+      "accuracy": 0.9989,
+      "macro_precision": 0.9998,
+      "macro_recall": 0.9437,
+      "balanced_accuracy": 0.9437,
+      "macro_f1": 0.9672,
+      "average_latency": 0.0968,
+      "confusion_matrix": {
+        "benign": {
+          "benign": 8208,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "phantom_congestion": {
+          "benign": 0,
+          "phantom_congestion": 32,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "signal_spoofing": {
+          "benign": 0,
+          "phantom_congestion": 0,
+          "signal_spoofing": 32,
+          "false_closure": 0,
+          "position_spoofing": 0
+        },
+        "false_closure": {
+          "benign": 0,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 32,
+          "position_spoofing": 0
+        },
+        "position_spoofing": {
+          "benign": 9,
+          "phantom_congestion": 0,
+          "signal_spoofing": 0,
+          "false_closure": 0,
+          "position_spoofing": 23
+        }
+      },
+      "per_attack": {
+        "phantom_congestion": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "signal_spoofing": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "false_closure": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "average_latency": 0
+        },
+        "position_spoofing": {
+          "precision": 1.0,
+          "recall": 0.7188,
+          "f1": 0.8364,
+          "average_latency": 0.4286
+        }
+      }
+    }
+  },
+  "logistic_feature_importance": [
+    {
+      "feature": "Position claim",
+      "importance": 0.974092
+    },
+    {
+      "feature": "RSU region change",
+      "importance": 0.710533
+    },
+    {
+      "feature": "Adjacency violation",
+      "importance": 0.674964
+    },
+    {
+      "feature": "Congestion alert",
+      "importance": 0.618924
+    },
+    {
+      "feature": "Closure alert",
+      "importance": 0.558647
+    },
+    {
+      "feature": "Closure flag",
+      "importance": 0.558647
+    },
+    {
+      "feature": "Signal report",
+      "importance": 0.552595
+    },
+    {
+      "feature": "Sender is RSU",
+      "importance": 0.552595
+    },
+    {
+      "feature": "Controller mismatch",
+      "importance": 0.552595
+    },
+    {
+      "feature": "Majority mismatch",
+      "importance": 0.478162
+    },
+    {
+      "feature": "Density gap",
+      "importance": 0.136327
+    },
+    {
+      "feature": "Adjacent flow",
+      "importance": 0.086196
+    },
+    {
+      "feature": "Observed RSU density",
+      "importance": 0.070759
+    },
+    {
+      "feature": "Sender near segment",
+      "importance": 0.070688
+    }
+  ]
+}

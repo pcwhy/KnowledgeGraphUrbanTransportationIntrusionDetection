@@ -1,0 +1,7 @@
+component,mean_seconds,std_seconds
+Logistic retraining (full feature set),15.46829813525879,0.5539237402322408
+Logistic retraining (no RSU features),16.029011373740754,1.4027296978223514
+Logistic retraining (no topology features),16.59697427600622,0.9096169398300431
+KG initialization (full rules),7.725594146177173e-05,1.4277552002473408e-05
+KG initialization (no RSU rule),7.70240572746843e-05,1.1247670722653705e-05
+KG initialization (no topology rule),7.823165459558367e-05,1.1581862210766212e-05

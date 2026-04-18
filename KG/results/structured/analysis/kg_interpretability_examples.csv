@@ -1,0 +1,4 @@
+attack_family,message_id,tick,representative_claim,evidence_path,violated_checks,predicted_label
+Phantom congestion,m010398,6,V1 reports congestion density 4 on S1,V1 -> claimed segment S1 -> RSU density; V1 -> previous segment -> adjacent segments,claimed density 4 exceeds RSU density 0; sender location S4 is outside S1 and its neighbors; RSU still reports low occupancy (0) on S1,phantom_congestion
+Signal spoofing,m025348,6,R2 reports red at I2,I2 -> controller state; vehicles -> observed_signal -> I2; sender -> sender type,"controller at I2 is green while report says red; vehicle majority observation is green; sender type is RSU, so an inconsistent signal report is infrastructure-level evidence",signal_spoofing
+Position spoofing,m055248,6,V1 claims position on S1,V1 -> previous segment -> adjacent segments; previous segment -> RSU; claimed segment -> RSU,claimed segment S1 is nonadjacent to previous segment S6; claim crosses RSU regions R3 -> R1,position_spoofing

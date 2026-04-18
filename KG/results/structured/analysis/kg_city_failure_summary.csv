@@ -1,0 +1,4 @@
+city,observed_fraction_pct,monitored_fraction_pct,benign_false_alarm_rate_pct,kg_macro_f1,phantom_recall,signal_recall,closure_recall,position_recall
+austin,0.118,0.242,0.339,0.4209,1.0,0.5833,0.0,0.8333
+houston,0.028,0.061,0.332,0.3254,1.0,0.75,0.0,0.25
+dallas,0.02,0.043,0.342,0.2391,1.0,0.5833,0.0,0.0

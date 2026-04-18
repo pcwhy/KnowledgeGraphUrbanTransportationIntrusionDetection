@@ -1,0 +1,55 @@
+{
+  "metadata": {
+    "cities": [
+      "austin",
+      "houston",
+      "dallas"
+    ],
+    "base_seed": 42,
+    "route_library_cap": 800,
+    "vehicles_per_episode": 500,
+    "episodes_per_attack": 8,
+    "attack_families": [
+      "phantom_congestion",
+      "signal_spoofing",
+      "false_closure",
+      "position_spoofing"
+    ],
+    "validation_scope": "AADT-grounded route-demand sampling only; cyber labels are not validated by this artifact."
+  },
+  "summary": [
+    {
+      "city": "austin",
+      "route_library_seed": 42,
+      "episode_seed_start": 42,
+      "episode_seed_end": 73,
+      "active_segments": 6182,
+      "comparable_segments": 6182,
+      "log_pearson_r": 0.311,
+      "spearman_rho": 0.2921,
+      "top_decile_overlap_pct": 28.5
+    },
+    {
+      "city": "houston",
+      "route_library_seed": 43,
+      "episode_seed_start": 43,
+      "episode_seed_end": 74,
+      "active_segments": 9732,
+      "comparable_segments": 9732,
+      "log_pearson_r": 0.2858,
+      "spearman_rho": 0.2284,
+      "top_decile_overlap_pct": 31.0
+    },
+    {
+      "city": "dallas",
+      "route_library_seed": 44,
+      "episode_seed_start": 44,
+      "episode_seed_end": 75,
+      "active_segments": 7734,
+      "comparable_segments": 7734,
+      "log_pearson_r": 0.3166,
+      "spearman_rho": 0.2862,
+      "top_decile_overlap_pct": 32.2
+    }
+  ]
+}
