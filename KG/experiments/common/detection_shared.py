@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from statistics import mean
-from typing import Dict, List, Sequence, Tuple
+from typing import Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 
@@ -85,6 +85,12 @@ class MulticlassStats:
     def macro_f1(self) -> float:
         return sum(self.f1(label) for label in self.labels) / len(self.labels)
 
+    def balanced_accuracy(self) -> float:
+        return self.macro_recall()
+
+    def class_supports(self) -> Dict[str, int]:
+        return {label: self.support(label) for label in self.labels}
+
     def average_latency(self) -> float:
         return mean(self.latencies) if self.latencies else 0.0
 
@@ -96,7 +102,15 @@ class MulticlassLogisticRegressionModel:
         self.weights: np.ndarray | None = None
         self.labels: Tuple[str, ...] = CLASS_LABELS
 
-    def fit(self, x_rows: List[List[float]], y_rows: List[int], lr: float = 0.1, epochs: int = 1800, reg: float = 1e-3) -> None:
+    def fit(
+        self,
+        x_rows: List[List[float]],
+        y_rows: List[int],
+        lr: float = 0.1,
+        epochs: int = 1800,
+        reg: float = 1e-3,
+        class_weight_mode: Optional[str] = None,
+    ) -> None:
         x = np.asarray(x_rows, dtype=float)
         y = np.asarray(y_rows, dtype=int)
         self.mean = x.mean(axis=0)
@@ -107,12 +121,21 @@ class MulticlassLogisticRegressionModel:
         num_classes = len(self.labels)
         y_onehot = np.eye(num_classes)[y]
         self.weights = np.zeros((x_aug.shape[1], num_classes), dtype=float)
+        sample_weights = np.ones(len(y), dtype=float)
+        if class_weight_mode == "balanced":
+            class_counts = np.bincount(y, minlength=num_classes)
+            class_weights = np.ones(num_classes, dtype=float)
+            nonzero = class_counts > 0
+            class_weights[nonzero] = len(y) / (num_classes * class_counts[nonzero])
+            sample_weights = class_weights[y]
+        normalizer = float(sample_weights.sum()) if sample_weights.size else 1.0
         for _ in range(epochs):
             logits = x_aug @ self.weights
             logits -= logits.max(axis=1, keepdims=True)
             exp_logits = np.exp(np.clip(logits, -30, 30))
             preds = exp_logits / exp_logits.sum(axis=1, keepdims=True)
-            gradient = (x_aug.T @ (preds - y_onehot)) / len(y)
+            residual = (preds - y_onehot) * sample_weights[:, None]
+            gradient = (x_aug.T @ residual) / normalizer
             gradient[1:, :] += reg * self.weights[1:, :]
             self.weights -= lr * gradient
 
@@ -149,3 +172,56 @@ class MulticlassLogisticRegressionModel:
                     }
                 )
         return rows
+
+
+class GaussianNaiveBayesModel:
+    def __init__(self) -> None:
+        self.mean: np.ndarray | None = None
+        self.scale: np.ndarray | None = None
+        self.class_means: np.ndarray | None = None
+        self.class_vars: np.ndarray | None = None
+        self.log_priors: np.ndarray | None = None
+        self.labels: Tuple[str, ...] = CLASS_LABELS
+
+    def fit(self, x_rows: List[List[float]], y_rows: List[int]) -> None:
+        x = np.asarray(x_rows, dtype=float)
+        y = np.asarray(y_rows, dtype=int)
+        self.mean = x.mean(axis=0)
+        self.scale = x.std(axis=0)
+        self.scale[self.scale == 0] = 1.0
+        x_scaled = (x - self.mean) / self.scale
+        class_means = []
+        class_vars = []
+        log_priors = []
+        for class_index in range(len(self.labels)):
+            class_rows = x_scaled[y == class_index]
+            if len(class_rows) == 0:
+                class_means.append(np.zeros(x_scaled.shape[1], dtype=float))
+                class_vars.append(np.ones(x_scaled.shape[1], dtype=float))
+                log_priors.append(np.log(1e-12))
+                continue
+            class_means.append(class_rows.mean(axis=0))
+            class_vars.append(class_rows.var(axis=0) + 1e-6)
+            log_priors.append(np.log(len(class_rows) / len(y)))
+        self.class_means = np.asarray(class_means, dtype=float)
+        self.class_vars = np.asarray(class_vars, dtype=float)
+        self.log_priors = np.asarray(log_priors, dtype=float)
+
+    def predict_proba(self, features: List[float]) -> np.ndarray:
+        assert self.mean is not None and self.scale is not None
+        assert self.class_means is not None and self.class_vars is not None and self.log_priors is not None
+        x = (np.asarray(features, dtype=float) - self.mean) / self.scale
+        log_probs = self.log_priors.copy()
+        log_probs -= 0.5 * np.sum(np.log(2.0 * np.pi * self.class_vars), axis=1)
+        log_probs -= 0.5 * np.sum(((x - self.class_means) ** 2) / self.class_vars, axis=1)
+        log_probs -= float(np.max(log_probs))
+        probs = np.exp(np.clip(log_probs, -60.0, 60.0))
+        total = float(probs.sum())
+        if total <= 0.0:
+            probs = np.ones(len(self.labels), dtype=float)
+            total = float(probs.sum())
+        return probs / total
+
+    def predict_label(self, features: List[float]) -> str:
+        probabilities = self.predict_proba(features)
+        return self.labels[int(np.argmax(probabilities))]

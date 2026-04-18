@@ -27,6 +27,7 @@ from experiments.common.detection_shared import (
     ATTACK_TYPES,
     CANDIDATE_CLAIM_TYPES,
     CLASS_LABELS,
+    GaussianNaiveBayesModel,
     MulticlassLogisticRegressionModel,
     MulticlassStats,
 )
@@ -54,6 +55,14 @@ ATTACK_GROUP = {
     "signal_spoofing": "spoofing",
     "position_spoofing": "spoofing",
 }
+
+DETECTOR_ORDER = (
+    "baseline",
+    "flat_feature_logistic",
+    "weighted_logistic",
+    "gaussian_naive_bayes",
+    "knowledge_graph",
+)
 
 
 @dataclass
@@ -266,8 +275,10 @@ class KGDetector:
         adjacency: Dict[str, set[str]],
         segment_to_rsu: Dict[str, str],
         segment_to_intersection: Dict[str, str],
+        alert_threshold: int = 2,
     ) -> None:
         self.segment_to_rsu = segment_to_rsu
+        self.alert_threshold = alert_threshold
         self.state = GraphBackedKGState(adjacency, segment_to_rsu, segment_to_intersection)
 
     def predict_label(self, message: Message) -> Optional[str]:
@@ -316,7 +327,7 @@ class KGDetector:
             score += 1
         if rsu_density <= 2:
             score += 1
-        return score >= 2
+        return score >= self.alert_threshold
 
     def _detect_closure(self, message: Message) -> bool:
         target = message.segment or ""
@@ -329,7 +340,7 @@ class KGDetector:
             score += 1
         if adjacent_flow:
             score += 1
-        return score >= 2
+        return score >= self.alert_threshold
 
     def _detect_signal(self, message: Message) -> bool:
         intersection = message.intersection or ""
@@ -342,7 +353,7 @@ class KGDetector:
             score += 1
         if message.sender_type == "rsu":
             score += 1
-        return score >= 2
+        return score >= self.alert_threshold
 
     def _detect_position(self, message: Message) -> bool:
         claimed_vehicle = message.claimed_vehicle or ""
@@ -353,7 +364,7 @@ class KGDetector:
             score += 1
         if self.segment_to_rsu.get(previous or "") != self.segment_to_rsu.get(current):
             score += 1
-        return score >= 2
+        return score >= self.alert_threshold
 
 
 class FlatFeatureContext:
@@ -441,6 +452,24 @@ class FlatFeatureLogisticDetector:
         return prediction not in (None, "benign")
 
 
+class FlatFeatureNaiveBayesDetector:
+    def __init__(self, model: GaussianNaiveBayesModel, adjacency: Dict[str, set[str]], segment_to_rsu: Dict[str, str]) -> None:
+        self.model = model
+        self.context = FlatFeatureContext(adjacency, segment_to_rsu)
+
+    def predict_label(self, message: Message) -> Optional[str]:
+        features = self.context.features_for(message)
+        prediction: Optional[str] = None
+        if features is not None:
+            prediction = self.model.predict_label(features)
+        self.context.update(message)
+        return prediction
+
+    def observe(self, message: Message) -> bool:
+        prediction = self.predict_label(message)
+        return prediction not in (None, "benign")
+
+
 def split_episodes(
     episodes: Sequence[Tuple[List[Message], Optional[str], int]],
     train_ratio: float = 0.7,
@@ -473,6 +502,21 @@ def build_learning_dataset(episodes, adjacency: Dict[str, set[str]], segment_to_
                 y_rows.append(CLASS_LABELS.index(label))
             context.update(message)
     return x_rows, y_rows
+
+
+def summarize_class_distribution(y_rows: Sequence[int]) -> List[Dict[str, float | int | str]]:
+    total = max(1, len(y_rows))
+    counts = {label: 0 for label in CLASS_LABELS}
+    for idx in y_rows:
+        counts[CLASS_LABELS[int(idx)]] += 1
+    return [
+        {
+            "class_label": label,
+            "samples": counts[label],
+            "share": round(counts[label] / total, 6),
+        }
+        for label in CLASS_LABELS
+    ]
 
 
 def segment_id(u: int, v: int, key: int) -> str:
@@ -983,6 +1027,7 @@ def evaluate_detector(detector_factory, episodes, detector_name: str, city_key: 
         "accuracy": round(stats.accuracy(), 4),
         "macro_precision": round(stats.macro_precision(), 4),
         "macro_recall": round(stats.macro_recall(), 4),
+        "balanced_accuracy": round(stats.balanced_accuracy(), 4),
         "macro_f1": round(stats.macro_f1(), 4),
         "average_latency": round(stats.average_latency(), 4),
         "confusion_matrix": stats.confusion,
@@ -1038,15 +1083,34 @@ def run_city_benchmark(city_key: str, seed: int = 42, episodes_per_case: int = E
         flush=True,
     )
     x_train, y_train = build_learning_dataset(train_episodes, context["adjacency"], context["segment_to_rsu"])
+    x_test, y_test = build_learning_dataset(test_episodes, context["adjacency"], context["segment_to_rsu"])
     learning_model = MulticlassLogisticRegressionModel()
     print(f"[{city_key.title()}] training flat-feature logistic detector on {len(x_train)} samples", flush=True)
     learning_model.fit(x_train, y_train)
+    weighted_learning_model = MulticlassLogisticRegressionModel()
+    print(f"[{city_key.title()}] training weighted logistic detector on {len(x_train)} samples", flush=True)
+    weighted_learning_model.fit(x_train, y_train, class_weight_mode="balanced")
+    gaussian_nb_model = GaussianNaiveBayesModel()
+    print(f"[{city_key.title()}] fitting Gaussian naive Bayes detector on {len(x_train)} samples", flush=True)
+    gaussian_nb_model.fit(x_train, y_train)
 
     baseline = evaluate_detector(lambda: BaselineDetector(context["adjacency"]), test_episodes, "baseline", city_key)
     learning = evaluate_detector(
         lambda: FlatFeatureLogisticDetector(learning_model, context["adjacency"], context["segment_to_rsu"]),
         test_episodes,
         "flat-feature logistic",
+        city_key,
+    )
+    weighted_learning = evaluate_detector(
+        lambda: FlatFeatureLogisticDetector(weighted_learning_model, context["adjacency"], context["segment_to_rsu"]),
+        test_episodes,
+        "weighted logistic",
+        city_key,
+    )
+    gaussian_nb = evaluate_detector(
+        lambda: FlatFeatureNaiveBayesDetector(gaussian_nb_model, context["adjacency"], context["segment_to_rsu"]),
+        test_episodes,
+        "Gaussian naive Bayes",
         city_key,
     )
     kg = evaluate_detector(
@@ -1056,7 +1120,7 @@ def run_city_benchmark(city_key: str, seed: int = 42, episodes_per_case: int = E
         city_key,
     )
     print(
-        f"[{city_key.title()}] completed benchmark: baseline macro-F1={baseline['macro_f1']}, logistic macro-F1={learning['macro_f1']}, KG macro-F1={kg['macro_f1']}",
+        f"[{city_key.title()}] completed benchmark: baseline macro-F1={baseline['macro_f1']}, logistic macro-F1={learning['macro_f1']}, weighted logistic macro-F1={weighted_learning['macro_f1']}, GaussianNB macro-F1={gaussian_nb['macro_f1']}, KG macro-F1={kg['macro_f1']}",
         flush=True,
     )
     return {
@@ -1077,8 +1141,16 @@ def run_city_benchmark(city_key: str, seed: int = 42, episodes_per_case: int = E
         "train_data": train_episodes,
         "test_data": test_episodes,
         "learning_model": learning_model,
+        "weighted_learning_model": weighted_learning_model,
+        "gaussian_nb_model": gaussian_nb_model,
+        "class_distribution": {
+            "train": summarize_class_distribution(y_train),
+            "test": summarize_class_distribution(y_test),
+        },
         "baseline": baseline,
         "flat_feature_logistic": learning,
+        "weighted_logistic": weighted_learning,
+        "gaussian_naive_bayes": gaussian_nb,
         "knowledge_graph": kg,
     }
 
@@ -1148,8 +1220,11 @@ def write_outputs(results: List[dict], transfer_rows: List[dict]) -> None:
                     {"feature": feature, "value": value}
                     for feature, value in item["learning_model"].feature_importance()
                 ],
+                "class_distribution": item["class_distribution"],
                 "baseline": item["baseline"],
                 "flat_feature_logistic": item["flat_feature_logistic"],
+                "weighted_logistic": item["weighted_logistic"],
+                "gaussian_naive_bayes": item["gaussian_naive_bayes"],
                 "knowledge_graph": item["knowledge_graph"],
             }
         )
@@ -1177,7 +1252,7 @@ def write_outputs(results: List[dict], transfer_rows: List[dict]) -> None:
                 "monitored_intersections": item["monitored_intersections_count"],
             }
         )
-        for detector_name in ("baseline", "flat_feature_logistic", "knowledge_graph"):
+        for detector_name in DETECTOR_ORDER:
             det = item[detector_name]
             rows.append({
                 "city": item["city"],
@@ -1187,6 +1262,7 @@ def write_outputs(results: List[dict], transfer_rows: List[dict]) -> None:
                 "accuracy": det["accuracy"],
                 "macro_precision": det["macro_precision"],
                 "macro_recall": det["macro_recall"],
+                "balanced_accuracy": det["balanced_accuracy"],
                 "macro_f1": det["macro_f1"],
                 "latency": det["average_latency"],
             })
@@ -1226,6 +1302,25 @@ def write_outputs(results: List[dict], transfer_rows: List[dict]) -> None:
         writer.writeheader()
         writer.writerows(feature_rows)
     print(f"[output] wrote {(outdir / 'city_logistic_feature_importance.csv').name}", flush=True)
+
+    class_balance_rows = []
+    for item in results:
+        for split_name in ("train", "test"):
+            for row in item["class_distribution"][split_name]:
+                class_balance_rows.append(
+                    {
+                        "city": item["city"],
+                        "split": split_name,
+                        "class_label": row["class_label"],
+                        "samples": row["samples"],
+                        "share": row["share"],
+                    }
+                )
+    with (outdir / "city_class_balance.csv").open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(class_balance_rows[0].keys()))
+        writer.writeheader()
+        writer.writerows(class_balance_rows)
+    print(f"[output] wrote {(outdir / 'city_class_balance.csv').name}", flush=True)
 
     render_city_assets(PROJECT_ROOT)
 

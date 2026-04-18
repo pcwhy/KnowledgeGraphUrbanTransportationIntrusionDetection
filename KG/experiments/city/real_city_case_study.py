@@ -28,6 +28,10 @@ from experiments.common.project_paths import CITY_CACHE_DIR, CITY_RESULTS_DIR, R
 
 TXDOT_AADT_LAYER = "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/TxDOT_AADT/FeatureServer/0/query"
 TXDOT_AADT_FIELD = "AADT_CUR"
+TXDOT_PERMANENT_COUNT_LAYER = (
+    "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/"
+    "TxDOT_Permanent_Count_Stations/FeatureServer/0/query"
+)
 
 CITY_CONFIGS = {
     "austin": {
@@ -107,6 +111,27 @@ def download_city_graph(place: str, center: Tuple[float, float], radius_m: int, 
     graph = ox.add_edge_travel_times(graph)
     ox.save_graphml(graph, cache_path)
     return graph
+
+
+def download_txdot_permanent_count_stations(bounds: Tuple[float, float, float, float], cache_path: Path) -> gpd.GeoDataFrame:
+    if cache_path.exists():
+        return gpd.read_file(cache_path)
+
+    params = {
+        "where": "1=1",
+        "geometry": _bounds_to_envelope(bounds),
+        "geometryType": "esriGeometryEnvelope",
+        "inSR": 4326,
+        "spatialRel": "esriSpatialRelIntersects",
+        "outFields": "*",
+        "returnGeometry": "true",
+        "outSR": 4326,
+        "f": "geojson",
+    }
+    response = requests.get(TXDOT_PERMANENT_COUNT_LAYER, params=params, timeout=120)
+    response.raise_for_status()
+    cache_path.write_text(response.text, encoding="utf-8")
+    return gpd.read_file(cache_path)
 
 
 def annotate_edges_with_aadt(graph: nx.MultiDiGraph, aadt_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
@@ -211,6 +236,7 @@ def create_city_figure(
     graph: nx.MultiDiGraph,
     edges_gdf: gpd.GeoDataFrame,
     routes_gdf: gpd.GeoDataFrame,
+    count_stations: Optional[gpd.GeoDataFrame],
     output_path: Path,
 ) -> None:
     fig, ax = plt.subplots(figsize=(8.8, 8.8), facecolor="white")
@@ -247,10 +273,35 @@ def create_city_figure(
             zorder=3,
         )
 
+    if count_stations is not None and not count_stations.empty:
+        stations_3857 = count_stations.to_crs(3857)
+        stations_3857.plot(
+            ax=ax,
+            color="#c0392b",
+            marker="X",
+            markersize=85,
+            edgecolor="white",
+            linewidth=0.65,
+            alpha=0.96,
+            zorder=4,
+        )
+
     legend_handles = [
         Line2D([0], [0], color="#d9dee5", lw=3, label="Local roads"),
         Line2D([0], [0], color="#4f86c6", lw=3, label="Higher AADT corridors"),
         Line2D([0], [0], color="#7b2cbf", lw=3, linestyle="--", label="Selected routes"),
+        Line2D(
+            [0],
+            [0],
+            marker="X",
+            color="w",
+            markerfacecolor="#c0392b",
+            markeredgecolor="white",
+            markeredgewidth=0.8,
+            markersize=11,
+            lw=0,
+            label="RSU anchors",
+        ),
     ]
     ax.legend(
         handles=legend_handles,
@@ -269,6 +320,20 @@ def create_city_figure(
 
     ax.set_axis_off()
     fig.tight_layout()
+    fig.savefig(output_path, dpi=220, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+
+
+def create_three_city_panel(city_figure_paths: Sequence[Tuple[str, Path]], output_path: Path) -> None:
+    fig, axes = plt.subplots(1, len(city_figure_paths), figsize=(14.6, 4.4), facecolor="white")
+    if len(city_figure_paths) == 1:
+        axes = [axes]
+    for ax, (city_name, image_path) in zip(axes, city_figure_paths):
+        image = plt.imread(image_path)
+        ax.imshow(image)
+        ax.set_title(city_name, fontsize=12, color="#17324d", pad=8)
+        ax.set_axis_off()
+    fig.tight_layout(w_pad=1.2)
     fig.savefig(output_path, dpi=220, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 
@@ -330,10 +395,16 @@ def build_real_city_case_studies(city_keys: Optional[Sequence[str]] = None, seed
         bbox = (west, south, east, north)
         aadt_cache = paths["cache"] / f"{city_key}_txdot_aadt.geojson"
         aadt_gdf = download_txdot_aadt(bbox, aadt_cache)
+        station_cache = paths["cache"] / f"{city_key}_txdot_permanent_count_stations.geojson"
+        count_stations = download_txdot_permanent_count_stations(bbox, station_cache)
         if aadt_gdf.crs is None:
             aadt_gdf = aadt_gdf.set_crs(4326)
         else:
             aadt_gdf = aadt_gdf.to_crs(4326)
+        if count_stations.crs is None:
+            count_stations = count_stations.set_crs(4326)
+        else:
+            count_stations = count_stations.to_crs(4326)
 
         edges_gdf = annotate_edges_with_aadt(graph, aadt_gdf)
         weighted_nodes = select_weighted_nodes(graph, edges_gdf)
@@ -341,12 +412,17 @@ def build_real_city_case_studies(city_keys: Optional[Sequence[str]] = None, seed
         routes_gdf = route_lines(graph, routes)
         attack_edges = choose_attack_edges(edges_gdf)
 
-        cached_city_data.append((city_key, graph, edges_gdf, routes_gdf, routes, attack_edges))
+        cached_city_data.append((city_key, graph, edges_gdf, routes_gdf, count_stations, routes, attack_edges))
 
-    for city_key, graph, edges_gdf, routes_gdf, routes, attack_edges in cached_city_data:
+    panel_inputs: List[Tuple[str, Path]] = []
+    for city_key, graph, edges_gdf, routes_gdf, count_stations, routes, attack_edges in cached_city_data:
         figure_path = paths["figures"] / f"{city_key}_aadt_case_study.png"
-        create_city_figure(city_key, graph, edges_gdf, routes_gdf, figure_path)
+        create_city_figure(city_key, graph, edges_gdf, routes_gdf, count_stations, figure_path)
+        panel_inputs.append((CITY_CONFIGS[city_key]["place"].split(",")[0], figure_path))
         summaries.append(city_summary(city_key, graph, edges_gdf, routes, attack_edges))
+
+    if panel_inputs:
+        create_three_city_panel(panel_inputs, paths["figures"] / "texas_three_city_panel.png")
 
     write_summary_table(
         summaries,

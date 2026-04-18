@@ -28,6 +28,13 @@ KG_COLOR = "#1f5a91"
 ABLATION_COLORS = ["#1f5a91", "#6c8ebf", "#95b8d1", "#c6d8e6"]
 GRID_COLOR = "#d6dde6"
 TEXT_COLOR = "#18324a"
+DETECTOR_ORDER = (
+    "baseline",
+    "flat_feature_logistic",
+    "weighted_logistic",
+    "gaussian_naive_bayes",
+    "knowledge_graph",
+)
 
 
 SEGMENT_TO_RSU = {
@@ -201,6 +208,12 @@ class MulticlassStats:
     def macro_f1(self) -> float:
         return sum(self.f1(label) for label in self.labels) / len(self.labels)
 
+    def balanced_accuracy(self) -> float:
+        return self.macro_recall()
+
+    def class_supports(self) -> Dict[str, int]:
+        return {label: self.support(label) for label in self.labels}
+
     def average_latency(self) -> float:
         return mean(self.latencies) if self.latencies else 0.0
 
@@ -346,10 +359,17 @@ class GraphBackedKGState:
 
 
 class KnowledgeGraphDetector:
-    def __init__(self, use_topology: bool = True, use_rsu_context: bool = True, use_crowd_context: bool = True) -> None:
+    def __init__(
+        self,
+        use_topology: bool = True,
+        use_rsu_context: bool = True,
+        use_crowd_context: bool = True,
+        alert_threshold: int = 2,
+    ) -> None:
         self.use_topology = use_topology
         self.use_rsu_context = use_rsu_context
         self.use_crowd_context = use_crowd_context
+        self.alert_threshold = alert_threshold
         self.state = GraphBackedKGState()
 
     def predict_label(self, message: Message) -> Optional[str]:
@@ -405,7 +425,7 @@ class KnowledgeGraphDetector:
             score += 1
         if self.use_rsu_context and rsu_density <= 2:
             score += 1
-        return score >= 2
+        return score >= self.alert_threshold
 
     def _detect_false_closure(self, message: Message) -> bool:
         score = 0
@@ -419,7 +439,7 @@ class KnowledgeGraphDetector:
             score += 1
         if self.use_topology and self.use_rsu_context and adjacent_flow:
             score += 1
-        return score >= 2
+        return score >= self.alert_threshold
 
     def _detect_signal_spoofing(self, message: Message) -> bool:
         score = 0
@@ -433,7 +453,7 @@ class KnowledgeGraphDetector:
             score += 1
         if message.sender_type == "rsu":
             score += 1
-        return score >= 2
+        return score >= self.alert_threshold
 
     def _detect_position_spoofing(self, message: Message) -> bool:
         claimed_vehicle = message.claimed_vehicle or ""
@@ -445,7 +465,7 @@ class KnowledgeGraphDetector:
             score += 1
         if self.use_rsu_context and SEGMENT_TO_RSU.get(previous or "", "") != SEGMENT_TO_RSU.get(current, ""):
             score += 1
-        return score >= 2
+        return score >= self.alert_threshold
 
 class FlatFeatureContext:
     def __init__(self) -> None:
@@ -519,7 +539,15 @@ class MulticlassLogisticRegressionModel:
         self.weights: Optional[np.ndarray] = None
         self.labels: Tuple[str, ...] = CLASS_LABELS
 
-    def fit(self, x_rows: List[List[float]], y_rows: List[int], lr: float = 0.1, epochs: int = 1800, reg: float = 1e-3) -> None:
+    def fit(
+        self,
+        x_rows: List[List[float]],
+        y_rows: List[int],
+        lr: float = 0.1,
+        epochs: int = 1800,
+        reg: float = 1e-3,
+        class_weight_mode: Optional[str] = None,
+    ) -> None:
         x = np.asarray(x_rows, dtype=float)
         y = np.asarray(y_rows, dtype=int)
         self.mean = x.mean(axis=0)
@@ -530,12 +558,21 @@ class MulticlassLogisticRegressionModel:
         num_classes = len(self.labels)
         y_onehot = np.eye(num_classes)[y]
         self.weights = np.zeros((x_aug.shape[1], num_classes), dtype=float)
+        sample_weights = np.ones(len(y), dtype=float)
+        if class_weight_mode == "balanced":
+            class_counts = np.bincount(y, minlength=num_classes)
+            class_weights = np.ones(num_classes, dtype=float)
+            nonzero = class_counts > 0
+            class_weights[nonzero] = len(y) / (num_classes * class_counts[nonzero])
+            sample_weights = class_weights[y]
+        normalizer = float(sample_weights.sum()) if sample_weights.size else 1.0
         for _ in range(epochs):
             logits = x_aug @ self.weights
             logits -= logits.max(axis=1, keepdims=True)
             exp_logits = np.exp(np.clip(logits, -30, 30))
             preds = exp_logits / exp_logits.sum(axis=1, keepdims=True)
-            gradient = (x_aug.T @ (preds - y_onehot)) / len(y)
+            residual = (preds - y_onehot) * sample_weights[:, None]
+            gradient = (x_aug.T @ residual) / normalizer
             gradient[1:, :] += reg * self.weights[1:, :]
             self.weights -= lr * gradient
 
@@ -575,8 +612,79 @@ class MulticlassLogisticRegressionModel:
         return rows
 
 
+class GaussianNaiveBayesModel:
+    def __init__(self) -> None:
+        self.mean: Optional[np.ndarray] = None
+        self.scale: Optional[np.ndarray] = None
+        self.class_means: Optional[np.ndarray] = None
+        self.class_vars: Optional[np.ndarray] = None
+        self.log_priors: Optional[np.ndarray] = None
+        self.labels: Tuple[str, ...] = CLASS_LABELS
+
+    def fit(self, x_rows: List[List[float]], y_rows: List[int]) -> None:
+        x = np.asarray(x_rows, dtype=float)
+        y = np.asarray(y_rows, dtype=int)
+        self.mean = x.mean(axis=0)
+        self.scale = x.std(axis=0)
+        self.scale[self.scale == 0] = 1.0
+        x_scaled = (x - self.mean) / self.scale
+        class_means = []
+        class_vars = []
+        log_priors = []
+        for class_index in range(len(self.labels)):
+            class_rows = x_scaled[y == class_index]
+            if len(class_rows) == 0:
+                class_means.append(np.zeros(x_scaled.shape[1], dtype=float))
+                class_vars.append(np.ones(x_scaled.shape[1], dtype=float))
+                log_priors.append(np.log(1e-12))
+                continue
+            class_means.append(class_rows.mean(axis=0))
+            class_vars.append(class_rows.var(axis=0) + 1e-6)
+            log_priors.append(np.log(len(class_rows) / len(y)))
+        self.class_means = np.asarray(class_means, dtype=float)
+        self.class_vars = np.asarray(class_vars, dtype=float)
+        self.log_priors = np.asarray(log_priors, dtype=float)
+
+    def predict_proba(self, features: List[float]) -> np.ndarray:
+        assert self.mean is not None and self.scale is not None
+        assert self.class_means is not None and self.class_vars is not None and self.log_priors is not None
+        x = (np.asarray(features, dtype=float) - self.mean) / self.scale
+        log_probs = self.log_priors.copy()
+        log_probs -= 0.5 * np.sum(np.log(2.0 * np.pi * self.class_vars), axis=1)
+        log_probs -= 0.5 * np.sum(((x - self.class_means) ** 2) / self.class_vars, axis=1)
+        log_probs -= float(np.max(log_probs))
+        probs = np.exp(np.clip(log_probs, -60.0, 60.0))
+        total = float(probs.sum())
+        if total <= 0.0:
+            probs = np.ones(len(self.labels), dtype=float)
+            total = float(probs.sum())
+        return probs / total
+
+    def predict_label(self, features: List[float]) -> str:
+        probabilities = self.predict_proba(features)
+        return self.labels[int(np.argmax(probabilities))]
+
+
 class FlatFeatureLogisticDetector:
     def __init__(self, model: MulticlassLogisticRegressionModel) -> None:
+        self.model = model
+        self.context = FlatFeatureContext()
+
+    def predict_label(self, message: Message) -> Optional[str]:
+        features = self.context.features_for(message)
+        prediction: Optional[str] = None
+        if features is not None:
+            prediction = self.model.predict_label(features)
+        self.context.update(message)
+        return prediction
+
+    def observe(self, message: Message) -> bool:
+        prediction = self.predict_label(message)
+        return prediction not in (None, "benign")
+
+
+class FlatFeatureNaiveBayesDetector:
+    def __init__(self, model: GaussianNaiveBayesModel) -> None:
         self.model = model
         self.context = FlatFeatureContext()
 
@@ -619,6 +727,21 @@ def build_learning_dataset(episodes: Sequence[Tuple[List[Message], Optional[str]
                 y_rows.append(CLASS_LABELS.index(label))
             context.update(message)
     return x_rows, y_rows
+
+
+def summarize_class_distribution(y_rows: Sequence[int]) -> List[Dict[str, float | int | str]]:
+    total = max(1, len(y_rows))
+    counts = {label: 0 for label in CLASS_LABELS}
+    for idx in y_rows:
+        counts[CLASS_LABELS[int(idx)]] += 1
+    return [
+        {
+            "class_label": label,
+            "samples": counts[label],
+            "share": round(counts[label] / total, 6),
+        }
+        for label in CLASS_LABELS
+    ]
 
 
 class UrbanTransportExperiment:
@@ -810,6 +933,7 @@ def evaluate_detector(detector_name: str, detector_factory, episodes: Sequence[T
         "accuracy": round(stats.accuracy(), 4),
         "macro_precision": round(stats.macro_precision(), 4),
         "macro_recall": round(stats.macro_recall(), 4),
+        "balanced_accuracy": round(stats.balanced_accuracy(), 4),
         "macro_f1": round(stats.macro_f1(), 4),
         "average_latency": round(stats.average_latency(), 4),
         "confusion_matrix": stats.confusion,
@@ -827,7 +951,7 @@ def evaluate_detector(detector_name: str, detector_factory, episodes: Sequence[T
     return summary
 
 
-def run_full_experiment(seed: int = 42, episodes_per_case: int = 25) -> Dict[str, object]:
+def run_full_experiment(seed: int = 42, episodes_per_case: int = 25, kg_alert_threshold: int = 2) -> Dict[str, object]:
     simulator = UrbanTransportExperiment(seed=seed)
     episodes: List[Tuple[List[Message], Optional[str], int]] = []
 
@@ -841,36 +965,63 @@ def run_full_experiment(seed: int = 42, episodes_per_case: int = 25) -> Dict[str
 
     train_episodes, test_episodes = split_episodes(episodes)
     x_train, y_train = build_learning_dataset(train_episodes)
+    x_test, y_test = build_learning_dataset(test_episodes)
     learning_model = MulticlassLogisticRegressionModel()
     learning_model.fit(x_train, y_train)
+    weighted_learning_model = MulticlassLogisticRegressionModel()
+    weighted_learning_model.fit(x_train, y_train, class_weight_mode="balanced")
+    gaussian_nb_model = GaussianNaiveBayesModel()
+    gaussian_nb_model.fit(x_train, y_train)
 
     return {
         "seed": seed,
         "episodes_per_case": episodes_per_case,
         "train_episodes": len(train_episodes),
         "test_episodes": len(test_episodes),
+        "class_distribution": {
+            "train": summarize_class_distribution(y_train),
+            "test": summarize_class_distribution(y_test),
+        },
         "baseline": evaluate_detector("baseline", BaselineDetector, test_episodes),
         "flat_feature_logistic": evaluate_detector(
             "flat_feature_logistic",
             lambda: FlatFeatureLogisticDetector(learning_model),
             test_episodes,
         ),
-        "knowledge_graph": evaluate_detector("knowledge_graph", KnowledgeGraphDetector, test_episodes),
+        "weighted_logistic": evaluate_detector(
+            "weighted_logistic",
+            lambda: FlatFeatureLogisticDetector(weighted_learning_model),
+            test_episodes,
+        ),
+        "gaussian_naive_bayes": evaluate_detector(
+            "gaussian_naive_bayes",
+            lambda: FlatFeatureNaiveBayesDetector(gaussian_nb_model),
+            test_episodes,
+        ),
+        "knowledge_graph": evaluate_detector(
+            "knowledge_graph",
+            lambda: KnowledgeGraphDetector(alert_threshold=kg_alert_threshold),
+            test_episodes,
+        ),
         "ablations": {
-            "full_kg": evaluate_detector("full_kg", KnowledgeGraphDetector, test_episodes),
+            "full_kg": evaluate_detector(
+                "full_kg",
+                lambda: KnowledgeGraphDetector(alert_threshold=kg_alert_threshold),
+                test_episodes,
+            ),
             "kg_no_topology": evaluate_detector(
                 "kg_no_topology",
-                lambda: KnowledgeGraphDetector(use_topology=False),
+                lambda: KnowledgeGraphDetector(use_topology=False, alert_threshold=kg_alert_threshold),
                 test_episodes,
             ),
             "kg_no_rsu": evaluate_detector(
                 "kg_no_rsu",
-                lambda: KnowledgeGraphDetector(use_rsu_context=False),
+                lambda: KnowledgeGraphDetector(use_rsu_context=False, alert_threshold=kg_alert_threshold),
                 test_episodes,
             ),
             "kg_no_crowd": evaluate_detector(
                 "kg_no_crowd",
-                lambda: KnowledgeGraphDetector(use_crowd_context=False),
+                lambda: KnowledgeGraphDetector(use_crowd_context=False, alert_threshold=kg_alert_threshold),
                 test_episodes,
             ),
         },
@@ -889,7 +1040,7 @@ def write_outputs(results: Dict[str, object], output_dir: Path) -> None:
         json.dump(results, handle, indent=2)
 
     summary_rows = []
-    for detector_name in ("baseline", "flat_feature_logistic", "knowledge_graph"):
+    for detector_name in DETECTOR_ORDER:
         detector = results[detector_name]
         summary_rows.append(
             {
@@ -897,6 +1048,7 @@ def write_outputs(results: Dict[str, object], output_dir: Path) -> None:
                 "accuracy": detector["accuracy"],
                 "macro_precision": detector["macro_precision"],
                 "macro_recall": detector["macro_recall"],
+                "balanced_accuracy": detector["balanced_accuracy"],
                 "macro_f1": detector["macro_f1"],
                 "average_latency": detector["average_latency"],
             }
@@ -908,7 +1060,7 @@ def write_outputs(results: Dict[str, object], output_dir: Path) -> None:
         writer.writerows(summary_rows)
 
     confusion_rows = []
-    for detector_name in ("baseline", "flat_feature_logistic", "knowledge_graph"):
+    for detector_name in DETECTOR_ORDER:
         matrix = results[detector_name]["confusion_matrix"]
         for true_label in CLASS_LABELS:
             for pred_label in CLASS_LABELS:
@@ -949,6 +1101,22 @@ def write_outputs(results: Dict[str, object], output_dir: Path) -> None:
         writer = csv.DictWriter(handle, fieldnames=["feature", "importance"])
         writer.writeheader()
         writer.writerows(results["logistic_feature_importance"])
+
+    class_balance_rows = []
+    for split_name in ("train", "test"):
+        for row in results["class_distribution"][split_name]:
+            class_balance_rows.append(
+                {
+                    "split": split_name,
+                    "class_label": row["class_label"],
+                    "samples": row["samples"],
+                    "share": row["share"],
+                }
+            )
+    with (output_dir / "class_balance.csv").open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(class_balance_rows[0].keys()))
+        writer.writeheader()
+        writer.writerows(class_balance_rows)
 
     full_kg_f1 = results["ablations"]["full_kg"]["macro_f1"]
     ablation_rows = []
